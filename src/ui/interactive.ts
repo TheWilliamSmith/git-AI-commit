@@ -3,7 +3,7 @@ import { CommitSuggestion } from "../ai/analyseCommit";
 
 export async function selectCommitMessage(suggestions: CommitSuggestion[]): Promise<string> {
   const choices = suggestions.map((s) => ({
-    name: `${s.message}\n  ${s.description ? `→ ${s.description}` : ""}`,
+    name: `${s.message}\n `,
     value: s.message,
     short: s.message,
   }));
