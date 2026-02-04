@@ -15,19 +15,36 @@ export async function analyseCommit(diff: string): Promise<CommitSuggestion[]> {
       messages: [
         {
           role: "user",
-          content: `Analyze this git diff and suggest 3-5 commit messages following Conventional Commits format.
+          content: `Analyze this git diff and suggest AT LEAST 5 commit messages following Conventional Commits format.
+
+            CRITICAL: Provide multiple options with varying levels of detail and grouping.
 
             Rules:
             - Use types: feat, fix, chore, refactor, docs, style, test, perf
-            - Be concise and specific
-            - Focus on WHAT changed and WHY
-            - Format: type(scope): description
+            - Provide at least 5 different suggestions with varying approaches:
+            1. One highly grouped message combining most/all changes
+            2. A few moderately grouped messages
+            3. Some more specific/atomic suggestions
+            - Use "and" or commas to combine related changes
+            - Format: type(scope): add/update/fix X and Y
+            - Be creative with different scopes and emphasis
 
-            Return ONLY a JSON array of objects with this format:
+            Examples of variety:
+            ✅ "feat(dev): add Makefile and improve Docker configuration"
+            ✅ "chore(config): update development environment setup"
+            ✅ "feat(docker): add Makefile for quick development startup"
+            ✅ "chore(deps): add better-auth and update dependencies"
+            ✅ "refactor(dev): improve development tooling and naming"
+
+            Return ONLY a JSON array with AT LEAST 5 suggestions:
             [
                 {
-                    "message": "feat(docker): add development Makefile",
-                    "description": "Simplifies local development setup"
+                    "message": "feat(dev): add development tooling and improve configuration",
+                    "description": "Adds Makefile for quick setup and renames Docker services"
+                },
+                {
+                    "message": "chore(config): enhance development environment",
+                    "description": "Improves Docker setup and adds convenience scripts"
                 }
             ]
 
