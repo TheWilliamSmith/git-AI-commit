@@ -1,13 +1,26 @@
 import "dotenv/config";
 import { getStagedDiff } from "./git/gitStagedDiff";
-import { testAnthropicClient } from "./ai/client";
 import { analyseCommit } from "./ai/analyseCommit";
 import { selectCommitMessage } from "./ui/interactive";
 import { createCommit } from "./git/commit";
+import { setConfig, showConfig } from "./commands/config";
 
 async function main() {
   try {
     console.log("Using Git Ai Commit");
+
+    const args = process.argv.slice(2);
+
+    if (args[0] === "config") {
+      if (args[1] === "set-key" && args[2]) {
+        setConfig("anthropicApiKey", args[2]);
+        process.exit(0);
+      }
+      if (args[1] === "show") {
+        showConfig();
+        return;
+      }
+    }
 
     const diff = await getStagedDiff();
 

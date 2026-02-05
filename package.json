@@ -1,7 +1,21 @@
 {
-  "name": "git-ai-commit",
-  "version": "1.0.0",
-  "description": "",
+  "name": "git-panda",
+  "version": "0.1.0",
+  "description": "AI-powered git commit message generator using Claude",
+  "author": "William Smith willsmith.devops@gmail.com",
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "claude",
+    "cli",
+    "conventional-commits"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheWilliamSmith/git-panda.git"
+  },
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
     "build": "tsup src/main.ts --format esm --clean --shims",
@@ -13,20 +27,21 @@
     "format:check": "prettier --check \"src/**/*.ts\""
   },
   "bin": {
-    "git-ai": "./dist/main.js"
+    "git-panda": "./dist/main.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TheWilliamSmith/git-AI-commit.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/TheWilliamSmith/git-AI-commit/issues"
+    "url": "https://github.com/TheWilliamSmith/git-panda/issues"
   },
-  "homepage": "https://github.com/TheWilliamSmith/git-AI-commit#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "homepage": "https://github.com/TheWilliamSmith/git-panda#readme",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
     "dotenv": "^17.2.3",

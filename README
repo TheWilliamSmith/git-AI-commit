@@ -1,0 +1,38 @@
+# GIT AI COMMIT
+
+AI-powered commit message generator using Claude AI.
+
+## Installation
+
+```bash
+npm install -g git-panda
+```
+
+## Setup
+```bash
+git-panda config set-key YOUR-API-KEY
+```
+
+## Usage
+```bash
+git .
+git-panda
+```
+
+## Command
+### Show config
+```bash
+git-panda config show
+```
+
+## Features
+
+- Smart commit message generation with Claude AI
+- Follow Conventional Commits standard
+- Cost-effective (~$0.0015 per commit)
+- Fast and interactive
+- Beautiful CLI interface
+
+## License
+
+MIT 

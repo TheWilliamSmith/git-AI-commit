@@ -3,22 +3,19 @@ import * as dotenv from "dotenv";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { getConfig } from "../commands/config";
 
 dotenv.config();
+const config = getConfig();
 
 function getApiKey(): string {
-  const configPath = join(homedir(), ".config/git-ai-commit/config.json");
+  const apiKey = config.anthropicApiKey;
 
-  if (existsSync(configPath)) {
-    const config = JSON.parse(readFileSync(configPath, "utf-8"));
-    return config.anthropicApiKey;
+  if (apiKey) {
+    return apiKey;
   }
 
-  if (process.env.ANTHROPIC_API_KEY) {
-    return process.env.ANTHROPIC_API_KEY;
-  }
-
-  throw new Error("No API key found. Run: git-ai config set-key");
+  throw new Error("No API key found. Run: git-panda config set anthropicApiKey <your_api_key>");
 }
 
 export async function initAnthropicClient(): Promise<Anthropic> {
