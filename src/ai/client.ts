@@ -1,24 +1,24 @@
 import { Anthropic } from "@anthropic-ai/sdk/client.js";
-import * as dotenv from "dotenv";
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
-import { homedir } from "os";
 import { getConfig } from "../commands/config";
+import { logger } from "../services/logger.service";
 
-dotenv.config();
-const config = getConfig();
+interface Config {
+  anthropicApiKey?: string;
+  model?: string;
+}
 
 function getApiKey(): string {
+  const config = getConfig() as Config;
   const apiKey = config.anthropicApiKey;
 
-  if (apiKey) {
+  if (apiKey !== undefined && apiKey !== "") {
     return apiKey;
   }
 
   throw new Error("No API key found. Run: git-panda config set anthropicApiKey <your_api_key>");
 }
 
-export async function initAnthropicClient(): Promise<Anthropic> {
+export function initAnthropicClient(): Anthropic {
   const apiKey = getApiKey();
 
   const client = new Anthropic({
@@ -30,7 +30,7 @@ export async function initAnthropicClient(): Promise<Anthropic> {
 
 export async function testAnthropicClient(): Promise<boolean> {
   try {
-    const client = await initAnthropicClient();
+    const client = initAnthropicClient();
 
     const message = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
@@ -43,14 +43,14 @@ export async function testAnthropicClient(): Promise<boolean> {
       ],
     });
 
-    if (!message || message.content.length === 0) {
+    if (message.content.length === 0) {
       throw new Error("No response from Anthropic API");
     }
 
     return true;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error initializing Anthropic client: ${message}`);
+    logger.error(`Error initializing Anthropic client: ${message}`);
     return false;
   }
 }

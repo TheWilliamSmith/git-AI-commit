@@ -1,13 +1,13 @@
-import "dotenv/config";
 import { getStagedDiff } from "./git/gitStagedDiff";
 import { analyseCommit } from "./ai/analyseCommit";
 import { selectCommitMessage } from "./ui/interactive";
 import { createCommit } from "./git/commit";
 import { setConfig, showConfig } from "./commands/config";
+import { logger } from "./services/logger.service";
 
-async function main() {
+async function main(): Promise<void> {
   try {
-    console.log("Using Git Ai Commit");
+    logger.info("Using Git Ai Commit");
 
     const args = process.argv.slice(2);
 
@@ -23,15 +23,6 @@ async function main() {
     }
 
     const diff = await getStagedDiff();
-
-    // console.log("test if we can connect to anthropic");
-    //const canConnect = await testAnthropicClient();
-
-    // if (!canConnect) {
-    //   console.error("Failed to connect to Anthropic API. Exiting.");
-    //   process.exit(1);
-    // }
-
     const suggestions = await analyseCommit(diff);
 
     const selectedMessage = await selectCommitMessage(suggestions);
@@ -39,8 +30,8 @@ async function main() {
     await createCommit(selectedMessage);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error: ${message}`);
+    logger.error(`Error: ${message}`);
   }
 }
 
-main();
+void main();

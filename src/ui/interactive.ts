@@ -1,6 +1,18 @@
 import inquirer from "inquirer";
 import { CommitSuggestion } from "../ai/analyseCommit";
 
+interface SelectedAnswer {
+  selected: string;
+}
+
+interface ShouldEditAnswer {
+  shouldEdit: boolean;
+}
+
+interface EditedMessageAnswer {
+  editedMessage: string;
+}
+
 export async function selectCommitMessage(suggestions: CommitSuggestion[]): Promise<string> {
   const choices = suggestions.map((s) => ({
     name: `${s.message}\n `,
@@ -8,7 +20,7 @@ export async function selectCommitMessage(suggestions: CommitSuggestion[]): Prom
     short: s.message,
   }));
 
-  const { selected } = await inquirer.prompt([
+  const { selected } = await inquirer.prompt<SelectedAnswer>([
     {
       type: "rawlist",
       name: "selected",
@@ -18,7 +30,7 @@ export async function selectCommitMessage(suggestions: CommitSuggestion[]): Prom
     },
   ]);
 
-  const { shouldEdit } = await inquirer.prompt([
+  const { shouldEdit } = await inquirer.prompt<ShouldEditAnswer>([
     {
       type: "confirm",
       name: "shouldEdit",
@@ -28,7 +40,7 @@ export async function selectCommitMessage(suggestions: CommitSuggestion[]): Prom
   ]);
 
   if (shouldEdit) {
-    const { editedMessage } = await inquirer.prompt([
+    const { editedMessage } = await inquirer.prompt<EditedMessageAnswer>([
       {
         type: "input",
         name: "editedMessage",

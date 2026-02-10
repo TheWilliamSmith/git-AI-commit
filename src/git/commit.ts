@@ -1,4 +1,5 @@
 import simpleGit from "simple-git";
+import { logger } from "../services/logger.service";
 
 const git = simpleGit();
 
@@ -6,10 +7,11 @@ export async function createCommit(message: string): Promise<void> {
   try {
     await git.commit(message);
     await git.push();
-    console.log("\n✅ Commit created successfully!");
-    console.log(`📝 Message: ${message}`);
-  } catch (error: any) {
-    throw new Error(`Failed to create commit: ${error.message}`);
+    logger.info("\n✅ Commit created successfully!");
+    logger.info(`📝 Message: ${message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to create commit: ${errorMessage}`);
   }
 }
 

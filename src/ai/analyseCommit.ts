@@ -5,9 +5,25 @@ export interface CommitSuggestion {
   description: string;
 }
 
+interface AnthropicTextContent {
+  type: "text";
+  text: string;
+}
+
+function isTextContent(content: unknown): content is AnthropicTextContent {
+  return (
+    typeof content === "object" &&
+    content !== null &&
+    "type" in content &&
+    "text" in content &&
+    (content as { type: unknown }).type === "text" &&
+    typeof (content as { text: unknown }).text === "string"
+  );
+}
+
 export async function analyseCommit(diff: string): Promise<CommitSuggestion[]> {
   try {
-    const client = await initAnthropicClient();
+    const client = initAnthropicClient();
 
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
@@ -17,58 +33,42 @@ export async function analyseCommit(diff: string): Promise<CommitSuggestion[]> {
           role: "user",
           content: `Analyze this git diff and suggest AT LEAST 5 commit messages following Conventional Commits format.
 
-            CRITICAL: Provide multiple options with varying levels of detail and grouping.
+CRITICAL: Provide multiple options with varying levels of detail and grouping.
 
-            Rules:
-            - Use types: feat, fix, chore, refactor, docs, style, test, perf
-            - Provide at least 5 different suggestions with varying approaches:
-            1. One highly grouped message combining most/all changes
-            2. A few moderately grouped messages
-            3. Some more specific/atomic suggestions
-            - Use "and" or commas to combine related changes
-            - Format: type(scope): add/update/fix X and Y
-            - Be creative with different scopes and emphasis
+Rules:
+- Use types: feat, fix, chore, refactor, docs, style, test, perf
+- Provide at least 5 different suggestions with varying approaches:
+1. One highly grouped message combining most/all changes
+2. A few moderately grouped messages
+3. Some more specific/atomic suggestions
+- Use "and" or commas to combine related changes
+- Format: type(scope): add/update/fix X and Y
+- Be creative with different scopes and emphasis
 
-            Examples of variety:
-            ✅ "feat(dev): add Makefile and improve Docker configuration"
-            ✅ "chore(config): update development environment setup"
-            ✅ "feat(docker): add Makefile for quick development startup"
-            ✅ "chore(deps): add better-auth and update dependencies"
-            ✅ "refactor(dev): improve development tooling and naming"
+Return ONLY a JSON array.
 
-            Return ONLY a JSON array with AT LEAST 5 suggestions:
-            [
-                {
-                    "message": "feat(dev): add development tooling and improve configuration",
-                    "description": "Adds Makefile for quick setup and renames Docker services"
-                },
-                {
-                    "message": "chore(config): enhance development environment",
-                    "description": "Improves Docker setup and adds convenience scripts"
-                }
-            ]
-
-            Git diff:
-            ${diff}`,
+Git diff:
+${diff}`,
         },
       ],
     });
 
-    const content = response.content[0];
+    const firstContent = response.content[0];
 
-    if (content.type !== "text") {
-      throw new Error("Expected text response from API");
+    if (!isTextContent(firstContent)) {
+      throw new Error("Expected text content from Anthropic API");
     }
 
-    const jsonMatch = content.text.match(/\[[\s\S]*\]/);
+    const regex = /\[[^]*?\]/;
+    const jsonMatch = regex.exec(firstContent.text);
+
     if (!jsonMatch) {
-      throw new Error("No JSON found in response");
+      throw new Error("No JSON array found in response");
     }
 
-    const suggestions: CommitSuggestion[] = JSON.parse(jsonMatch[0]) as CommitSuggestion[];
-    return suggestions;
+    return JSON.parse(jsonMatch[0]) as CommitSuggestion[];
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to analyse commit: ${message}`);
+    throw new Error(`Failed to analyze commit: ${message}`);
   }
 }
