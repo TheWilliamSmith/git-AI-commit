@@ -1,6 +1,13 @@
 # GIT AI COMMIT
 
+![CodeQL](https://github.com/TheWilliamSmith/git-panda/workflows/CodeQL/badge.svg)](https://github.com/TheWilliamSmith/git-panda/security/code-scanning)
+
 AI-powered commit message generator using Claude AI.
+
+## 🔒 Security
+
+This project is automatically scanned for security vulnerabilities using GitHub CodeQL.
+```
 
 ## Installation
 
