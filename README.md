@@ -1,6 +1,6 @@
 # GIT AI COMMIT
 
-![CodeQL](https://github.com/TheWilliamSmith/git-panda/workflows/CodeQL/badge.svg)](https://github.com/TheWilliamSmith/git-panda/security/code-scanning)
+[![CodeQL](https://github.com/TheWilliamSmith/git-panda/actions/workflows/cicd.yml/badge.svg?branch=main)](https://github.com/TheWilliamSmith/git-panda/security/code-scanning)
 
 AI-powered commit message generator using Claude AI.
 
