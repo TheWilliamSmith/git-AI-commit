@@ -7,6 +7,11 @@ on:
 env:
   NODE_VERSION: "24.13.0"
 
+permissions:
+  contents: read
+  actions: write
+  security-events: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -79,9 +84,12 @@ jobs:
       - name: Run Npm Audit
         run: npm audit --audit-level=high
 
-  CodeQl:
+  codeql:
     needs: ["eslint", "prettier"]
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -89,7 +97,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: javascript, typescript
+          languages: javascript
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
